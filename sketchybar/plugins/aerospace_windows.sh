@@ -17,4 +17,6 @@ elif [ "$SENDER" = "aerospace_workspace_change" ]; then
   handle_workspace_change
 elif [[ "$SENDER" = "change-workspace-monitor" ]]; then
   sketchybar --set workspace.$TARGET_WORKSPACE display=$TARGET_MONITOR
+elif [[ "$SENDER" = "display_removed" || "$SENDER" = "display_added" ]]; then
+  sketchybar --reload
 fi

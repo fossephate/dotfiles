@@ -38,4 +38,6 @@ sketchybar --add item workspace_separator left                             \
            --subscribe workspace_separator front_app_switched              \
            --subscribe workspace_separator aerospace_workspace_change      \
            --subscribe workspace_separator change-window-workspace         \
-           --subscribe workspace_separator change-workspace-monitor
+           --subscribe workspace_separator change-workspace-monitor        \
+           --subscribe workspace_separator display_removed                \
+           --subscribe workspace_separator display_added
