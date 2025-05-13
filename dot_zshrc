@@ -26,5 +26,6 @@ case ":$PATH:" in
 esac
 # pnpm end
 
+# terminal path in zsh
 export PS1='%n@%m %2~ %# '
 

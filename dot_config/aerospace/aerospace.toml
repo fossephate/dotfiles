@@ -47,10 +47,15 @@ automatically-unhide-macos-hidden-apps = true
 
 
 
-# Run Sketchybar together with AeroSpace
-# sketchbar has a built-in detection of already running process,
-# so it won't be run twice on AeroSpace restart
-after-startup-command = ['exec-and-forget sketchybar']
+# # Run Sketchybar together with AeroSpace
+# # sketchbar has a built-in detection of already running process,
+# # so it won't be run twice on AeroSpace restart
+# after-startup-command = ['exec-and-forget sketchybar']
+
+after-startup-command = [
+  'exec-and-forget sketchybar',
+  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
+]
 
 # Notify Sketchybar about workspace change
 exec-on-workspace-change = ['/bin/bash', '-c',
@@ -177,6 +182,7 @@ exec-on-workspace-change = ['/bin/bash', '-c',
     # See: https://nikitabobko.github.io/AeroSpace/commands#layout
     alt-slash = 'layout tiles horizontal vertical'
     alt-comma = 'layout accordion horizontal vertical'
+    alt-period = 'layout floating tiling'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
     alt-n = 'focus left'
@@ -282,10 +288,12 @@ exec-on-workspace-change = ['/bin/bash', '-c',
     # alt-shift-semicolon = 'mode service'
     # alt-tab = 'mode service'
 
-    # alt-left = ['join-with left', 'mode main']
-    # alt-down = ['join-with down', 'mode main']
-    # alt-up = ['join-with up', 'mode main']
-    # alt-right = ['join-with right', 'mode main']
+    alt-cmd-n = ['join-with left', 'mode main']
+    alt-cmd-e = ['join-with down', 'mode main']
+    alt-cmd-i = ['join-with up', 'mode main']
+    alt-cmd-o = ['join-with right', 'mode main']
+
+    # alt-cmd-f = ['layout floating tiling', 'mode main']
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
