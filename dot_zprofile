@@ -1,9 +1,16 @@
+# .zprofile
+# runs on login!
+
 # Set PATH, MANPATH, etc., for Homebrew.
 eval "$(/opt/homebrew/bin/brew shellenv)"
-source ~/.bash_profile
 
-export GOROOT=$(realpath $(dirname $(realpath $(brew --prefix)/bin/go))/..)
-export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
-export ANDROID_NDK_VERSION=27.1.12297006
+# cargo
+. "$HOME/.cargo/env"
 
-clear
+# deno
+# . "/Users/fosse/.deno/env"
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+ [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+ [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion

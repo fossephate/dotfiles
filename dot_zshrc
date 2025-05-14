@@ -1,20 +1,16 @@
-# export NVM_DIR="$HOME/.nvm"
-#  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-#  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
+# .zshrc
 # for interactible shells!
 
-export PATH="/Users/fosse/fvm/default/bin:$PATH"
+
+# pub / dart
 export PATH="$PATH":"$HOME/.pub-cache/bin"
+
+# ruby / rbenv
 export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-. "/Users/fosse/.deno/env"
-export PATH="/Users/fosse/Library/Android/sdk/platform-tools/:$PATH"
 eval "$(rbenv init - zsh)"
 
-# bun completions
-[ -s "/Users/fosse/.bun/_bun" ] && source "/Users/fosse/.bun/_bun"
-
 # bun
+[ -s "/Users/fosse/.bun/_bun" ] && source "/Users/fosse/.bun/_bun"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
@@ -24,7 +20,10 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-# pnpm end
+
+# fvm
+# export PATH="/Users/fosse/fvm/default/bin:$PATH"
+export PATH="$PATH:/Users/fosse/fvm/default/bin"
 
 # terminal path in zsh
 export PS1='%n@%m %2~ %# '

@@ -1,7 +1,24 @@
-. "$HOME/.cargo/env"
+# .zshenv
+
+# runs on every shell!
 
 
-export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This load$
+# coreutils
+export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
 
+# go
+# export PATH="$PATH:/Users/fosse/go/bin"
+# export GOROOT=$(realpath $(dirname $(realpath $(brew --prefix)/bin/go))/..)
+
+# java
+export JAVA_HOME="/opt/homebrew/opt/openjdk@17"
+
+# android
+export ANDROID_NDK_VERSION=27.1.12297006
+export ANDROID_HOME=$HOME/Library/Android/sdk
+# export PATH=$PATH:$ANDROID_HOME/platform-tools
+# export PATH=$PATH:$ANDROID_HOME/tools
+# export PATH=$PATH:$ANDROID_HOME/tools/bin
+# export PATH=$PATH:$ANDROID_HOME/emulator
+# export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+export PATH=$PATH:$ANDROID_HOME/{platform-tools,tools,tools/bin,emulator,cmdline-tools/latest/bin}
