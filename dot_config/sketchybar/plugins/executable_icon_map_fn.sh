@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ### START-OF-ICON-MAP
 function __icon_map() {
@@ -667,5 +667,4 @@ function __icon_map() {
 }
 ### END-OF-ICON-MAP
 __icon_map "$1"
-
 echo "$icon_result"

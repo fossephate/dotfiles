@@ -7,4 +7,4 @@
 #           --set wifi update_freq=5
 
 # use the native wifi item
-sketchybar --add alias "Control Center,WiFi" right
+# sketchybar --add alias "Control Center,WiFi" right

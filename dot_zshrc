@@ -29,3 +29,9 @@ esac
 # terminal path in zsh
 export PS1='%n@%m %2~ %# '
 
+
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /Users/fosse/.dart-cli-completion/zsh-config.zsh ]] && . /Users/fosse/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+

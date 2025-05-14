@@ -26,7 +26,7 @@ echo "echo \"\$icon_result\"" >> ~/.config/sketchybar/plugins/icon_map_fn.sh
 chmod +x ~/.config/sketchybar/plugins/icon_map_fn.sh
 
 # make the sketchybar config executable
-chmod +x ~/.config/sketchybar/sketchbarrc
+chmod +x ~/.config/sketchybar/sketchybarrc
 
 # Start the sketchybar service
 # NOTE: This is commented out because it's launched by aerospace now. Uncomment if you want to start it manually or aren't using aerospace
