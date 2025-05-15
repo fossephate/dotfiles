@@ -23,6 +23,11 @@ brew install --cask cursor
 brew install --cask raycast
 brew install --cask menuwhere
 brew install --cask homerow
+brew install --cask wezterm
+brew install --cask ghostty
+brew install --cask shottr
+brew install --cask aldente
+brew install --cask copyclip
 
 brew install --cask nikitabobko/tap/aerospace
 
@@ -30,3 +35,7 @@ brew install --cask nikitabobko/tap/aerospace
 # scutil --get HostName 
 scutil --set LocalHostName book
 scutil --set ComputerName book
+
+
+# https://dropoverapp.com
+# picasso app mac app store

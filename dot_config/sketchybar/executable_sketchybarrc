@@ -23,10 +23,11 @@ sketchybar --bar height=28        \
                  sticky=off       \
                  padding_left=10  \
                  padding_right=10 \
-                 y_offset=24 \
-                 notch_offset=19 \
+                 y_offset=0 \
+                #  notch_offset=19 \
                  color=$BAR_COLOR \
-                 topmost=window
+                 topmost=off \
+                 font_smoothing=off
 
 
 ##### Changing Defaults #####
