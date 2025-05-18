@@ -34,3 +34,5 @@ export PS1='%n@%m %2~ %# '
 [[ -f /Users/fosse/.dart-cli-completion/zsh-config.zsh ]] && . /Users/fosse/.dart-cli-completion/zsh-config.zsh || true
 ## [/Completion]
 
+# so that git add *.tsx / etc works
+alias git='bash -c "git $*"'

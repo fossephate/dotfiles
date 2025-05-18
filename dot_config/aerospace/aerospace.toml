@@ -142,7 +142,7 @@ exec-on-workspace-change = ['/bin/bash', '-c',
 [gaps]
     inner.horizontal = 10
     inner.vertical =   10
-    outer.top = [{ monitor."main" = 40 }, 40]
+    outer.top = [{ monitor."main" = 40 }, 65]
     outer.left =      5
     outer.bottom =     5
     outer.right =      5
