@@ -52,7 +52,13 @@ automatically-unhide-macos-hidden-apps = true
 # # so it won't be run twice on AeroSpace restart
 # after-startup-command = ['exec-and-forget sketchybar']
 
+
+
+# Reload is so that if sketchybar is already running it reloads the aerospace workspace info
+# if sketchybar ISN'T running, --reload does nothing
+# run sketchybar second, so that if it WASN'T running, it gets launched.
 after-startup-command = [
+  'exec-and-forget sketchybar --reload',
   'exec-and-forget sketchybar',
   'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
 ]

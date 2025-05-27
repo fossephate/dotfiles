@@ -28,6 +28,7 @@ brew install --cask ghostty
 brew install --cask shottr
 brew install --cask aldente
 brew install --cask copyclip
+brew install --cask crossover
 
 brew install --cask nikitabobko/tap/aerospace
 

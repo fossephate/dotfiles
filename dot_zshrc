@@ -36,4 +36,8 @@ export PS1='%n@%m %2~ %# '
 
 # so that git add *.tsx / etc works
 # alias git2='bash -c "git $*"'
-alias git2='function _ls2() { bash -c "git $*"; }; _ls2'
+# alias git2='function _ls2() { bash -c "git $*"; }; _ls2'
+# alias git2='noglob function _git2() { bash -c "git $*"; }; _git2'
+# git2() {
+#   bash -c "git $(printf '%q ' "$@")"
+# }
