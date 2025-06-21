@@ -29,6 +29,8 @@ brew install --cask shottr
 brew install --cask aldente
 brew install --cask copyclip
 brew install --cask crossover
+brew install --cask cleanshot
+brew install --cask gitkraken
 
 brew install --cask nikitabobko/tap/aerospace
 
@@ -37,6 +39,6 @@ brew install --cask nikitabobko/tap/aerospace
 scutil --set LocalHostName book
 scutil --set ComputerName book
 
-
+# https://sindresorhus.com/supercharge
 # https://dropoverapp.com
 # picasso app mac app store
