@@ -22,7 +22,7 @@ TurnOffHotkeys() {
     Hotkey("E", "Off")
     Hotkey("I", "Off")
     Hotkey("O", "Off")
-    Hotkey(";", "Off")
+    Hotkey("'", "Off")
     Hotkey("M", "Off")
     Hotkey("space", "Off")
 }
@@ -32,7 +32,7 @@ TurnOnHotkeys() {
     Hotkey("E", "On")
     Hotkey("I", "On")
     Hotkey("O", "On")
-    Hotkey(";", "On")
+    Hotkey("'", "On")
     Hotkey("M", "On")
     Hotkey("space", "On")
 }
@@ -96,8 +96,8 @@ O::
     Send("{Right}")
 }
 
-; semicolon -> forward delete:
-`;::
+; apostrophe -> forward delete:
+'::
 {
     Send("{Del}")
 }
