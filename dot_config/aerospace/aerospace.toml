@@ -128,10 +128,12 @@ exec-on-workspace-change = ['/bin/bash', '-c',
     i = 'l'
     o = 'semicolon'
 
-    x = 'z'
-    c = 'x'
-    d = 'c'
-    z = 'b'
+    # x = 'z'
+    # c = 'x'
+    # d = 'c'
+    # z = 'b'
+    d = 'v'
+    v = 'b'
     k = 'n'
     h = 'm'
 
@@ -365,7 +367,7 @@ run = ['move-node-to-workspace Q']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.dt.Xcode'
-run = ['move-node-to-workspace V']
+run = ['move-node-to-workspace X']
 
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'

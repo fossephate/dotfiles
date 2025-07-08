@@ -1,7 +1,11 @@
 brew tap FelixKratz/formulae
 brew install borders
 
-brew install sketchybar
+# brew install sketchybar
+
+brew uninstall sketchybar
+brew tap fossephate/formulae
+brew install --HEAD sketchybar-display
 
 brew tap leoafarias/fvm
 brew install fvm
@@ -9,6 +13,7 @@ brew install fvm
 brew install nvm
 brew install pnpm
 brew install deno
+brew install imagemagick
 
 brew install --cask orion
 brew install --cask xcodes
@@ -33,6 +38,7 @@ brew install --cask cleanshot
 brew install --cask gitkraken
 
 brew install --cask nikitabobko/tap/aerospace
+brew install --cask mouseless
 
 
 # scutil --get HostName 
