@@ -42,3 +42,5 @@ export PS1='%n@%m %2~ %# '
 #   bash -c "git $(printf '%q ' "$@")"
 # }
 eval "$(zoxide init --cmd cd zsh)"
+
+eval "$(starship init zsh)"

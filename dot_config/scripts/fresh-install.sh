@@ -14,6 +14,8 @@ brew install nvm
 brew install pnpm
 brew install deno
 brew install imagemagick
+brew install swiftformat
+brew install starship
 
 brew install --cask orion
 brew install --cask xcodes
@@ -36,6 +38,10 @@ brew install --cask copyclip
 brew install --cask crossover
 brew install --cask cleanshot
 brew install --cask gitkraken
+
+# starship font
+brew install --cask font-fira-code-nerd-font
+starship preset gruvbox-rainbow -o ~/.config/starship.toml
 
 brew install --cask nikitabobko/tap/aerospace
 brew install --cask mouseless
