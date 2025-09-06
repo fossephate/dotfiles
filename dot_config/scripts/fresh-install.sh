@@ -41,6 +41,7 @@ brew install --cask gitkraken
 
 # starship font
 brew install --cask font-fira-code-nerd-font
+brew install --cask font-sf-mono-nerd-font-ligaturized
 starship preset gruvbox-rainbow -o ~/.config/starship.toml
 
 brew install --cask nikitabobko/tap/aerospace

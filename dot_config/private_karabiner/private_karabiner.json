@@ -16,6 +16,29 @@
                                     }
                                 ],
                                 "from": {
+                                    "key_code": "f",
+                                    "modifiers": {
+                                        "mandatory": [],
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "t",
+                                        "modifiers": ["control", "shift", "option"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "tab_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
                                     "key_code": "j",
                                     "modifiers": {
                                         "mandatory": [],
@@ -25,7 +48,7 @@
                                 "to": [
                                     {
                                         "key_code": "left_arrow",
-                                        "modifiers": ["control"]
+                                        "modifiers": ["command", "option"]
                                     }
                                 ],
                                 "type": "basic"
@@ -48,7 +71,7 @@
                                 "to": [
                                     {
                                         "key_code": "down_arrow",
-                                        "modifiers": ["control"]
+                                        "modifiers": ["command", "option"]
                                     }
                                 ],
                                 "type": "basic"
@@ -71,7 +94,7 @@
                                 "to": [
                                     {
                                         "key_code": "up_arrow",
-                                        "modifiers": ["control"]
+                                        "modifiers": ["command", "option"]
                                     }
                                 ],
                                 "type": "basic"
@@ -94,7 +117,7 @@
                                 "to": [
                                     {
                                         "key_code": "right_arrow",
-                                        "modifiers": ["control"]
+                                        "modifiers": ["command", "option"]
                                     }
                                 ],
                                 "type": "basic"
@@ -130,7 +153,7 @@
                         "title": "Tab Key Mappings"
                     },
                     {
-                        "description": "Map W,F,P to 1,2,3 when right Alt is held",
+                        "description": "Map W,F,P to 1,2,3 when right shift is held",
                         "manipulators": [
                             {
                                 "from": {
