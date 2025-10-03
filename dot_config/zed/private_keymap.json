@@ -24,7 +24,8 @@
       "shift-u": "vim::Redo",
       "space e": "project_panel::ToggleFocus",
       // "space f f": "file_finder::Toggle",
-      "space f": "editor::ToggleFold"
+      "space f": "editor::ToggleFold",
+      "cmd-e": "project_panel::ToggleFocus"
     }
   },
   {
@@ -34,6 +35,29 @@
       "shift-enter": "search::SelectPreviousMatch",
       "cmd-g": "search::SelectNextMatch",
       "cmd-shift-g": "search::SelectPreviousMatch"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-t": "terminal_panel::ToggleFocus"
+      // "cmd-e": "project_panel::ToggleFocus" // doesn't work for some reason :/
+      // "cmd-shift-t":
+    }
+  },
+  {
+    "context": "Editor && edit_prediction_conflict",
+    "bindings": {
+      "enter": "editor::ConfirmCompletionInsert", // Example of a modified keybinding
+      "tab": "editor::AcceptEditPrediction"
+    }
+  },
+  {
+    "context": "Editor && edit_prediction",
+    "bindings": {
+      // Here we also allow `alt-enter` to accept the prediction
+      "shift-tab": "editor::AcceptPartialEditPrediction",
+      "tab": "editor::AcceptEditPrediction"
     }
   }
 ]

@@ -7,6 +7,20 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "edit_predictions": {
+    "disabled_globs": [],
+    "mode": "eager",
+    "copilot": {
+      "proxy": null,
+      "proxy_no_verify": null,
+      "enterprise_uri": null
+    },
+    "enabled_in_text_threads": false
+  },
+  "features": {
+    "edit_prediction_provider": "zed"
+  },
+  "icon_theme": "Material Icon Theme",
   "agent": {
     "inline_assistant_model": {
       "provider": "anthropic",
@@ -34,6 +48,14 @@
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "One Dark Pro"
+    "dark": "VSCode Dark Modern"
+  },
+  "languages": {
+    "Swift": {
+      "format_on_save": "off"
+    }
+  },
+  "buffer_font_features": {
+    "calt": false
   }
 }

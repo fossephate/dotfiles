@@ -8,36 +8,61 @@ workspace_app_icons() {
   fi  
   local workspaceID="$1"
 
-  local aerospace_apps=$(aerospace list-windows --workspace $workspaceID)
+  local aerospace_apps=$(aerospace list-windows --workspace $workspaceID --format "%{app-name}")
 
   if [[ -z "$aerospace_apps" ]]; then
     echo " —"
     return
   fi
 
-  # iterate over all the workspace's windows and extract the names
-  local apps=""
-  while read -r line; do
-    local app_name=$(echo "$line" | awk -F '|' '{gsub(/^ +| +$/, "", $2); print $2}')
-    apps+="$app_name\n"
-done < <(echo "$aerospace_apps") # < <() is used to prevent subshell creation in zsh
-# using a subshell would cause the variable to be lost
-  
-  # replace occurrences of `\n` with newlines
-  apps=$(printf "%b" "$apps")
-
-  icon_strip=""
+  # Generate icon strip using batched approach (eliminates subprocess overhead)
+  local app_array=()
   while read -r app; do
-    icon_strip+="$($CONFIG_DIR/plugins/icon_map_fn.sh "$app") "
-  done <<< "${apps}"
-  icon_strip=$(echo "$icon_strip" | tr -d '\n')
-  echo "$icon_strip"
+    [[ -n "$app" ]] && app_array+=("$app")
+  done <<< "$aerospace_apps"
+  
+  if [[ ${#app_array[@]} -gt 0 ]]; then
+    echo "$($CONFIG_DIR/plugins/icon_map_fn_batched.sh "${app_array[@]}")"
+  else
+    echo ""
+  fi
   return
 } 
 
 
 # Load the color variables
 source $CONFIG_DIR/colors.sh
+
+# Workspace theme arrays for centralized styling
+workspace_base_style=(
+    background.color="$ITEM_BG_COLOR"
+    background.corner_radius=5
+    background.height=22
+    background.border_width=1
+    icon.background.drawing=on
+    icon.background.corner_radius=5
+    icon.background.height=20
+    icon.padding_left=4
+    icon.padding_right=6
+    icon.color="0xffffffff"
+    label.font="sketchybar-app-font:Regular:16.0"
+    label.padding_left=6
+    label.y_offset=-1
+)
+
+workspace_active_style=(
+    label.color="$ACCENT_COLOR"
+    icon.background.color="$ACCENT_COLOR" 
+    background.border_color="$ACCENT_COLOR"
+)
+
+workspace_inactive_style=(
+    label.color="$INACTIVE_COLOR"
+    icon.background.color="$INACTIVE_COLOR"
+    background.border_color="$INACTIVE_COLOR"
+)
+
+# Note: Arrays are expanded directly in sketchybar calls to preserve proper quoting
 
 # Get the system monitor ID of the specified workspace. 
 # Expects the workspace ID as the first argument
@@ -52,13 +77,16 @@ get_workspace_monitor_id() {
   echo $monitor_id
 }
 
-# create a workspace item.
-# Expects the workspace id as the first argument
-create_workspace() {
+# Generate sketchybar arguments for a workspace item (no execution)
+# Expects the workspace id as the first argument  
+# Optional second argument: item to position before (if not provided, no positioning)
+# Returns the arguments as a space-separated string
+generate_workspace_args() {
     local sid=$1
-    # if $1 was empty, log an error in /tmp/sketchybar.log
+    local position_before=$2
+    
+    # if $1 was empty, return empty
     if [ -z "$sid" ]; then
-        echo "Error: create_workspace() expects a workspace id as the first argument" >> /tmp/sketchybar.log
         return
     fi
 
@@ -71,33 +99,45 @@ create_workspace() {
       drawing="on"
     fi
 
-    # Create the workspace item for the provided space ID
-    sketchybar --add item workspace.$sid left \
-        --set workspace.$sid \
-        drawing="$drawing" \
-        display="$monitor_id" \
-        background.color="$ITEM_BG_COLOR" \
-        background.corner_radius=5 \
-        background.height=22 \
-        background.border_color="0xFF$SUBTLE" \
-        background.border_width=1 \
-        icon.background.drawing=on \
-        icon.background.corner_radius=5 \
-        icon.background.color="0xFF$SUBTLE" \
-        icon.background.height=20 \
-        icon.padding_left=4 \
-        icon.padding_right=6 \
-        icon.color="$BAR_COLOR" \
-        icon="$sid" \
-        click_script="aerospace workspace $sid" \
-        label.font="sketchybar-app-font:Regular:16.0" \
-        icon.font="Hack Nerd Font Mono:Regular:16.0" \
-        label.color="0xFF$MUTED" \
-        label.padding_left=6 \
-        label.y_offset=-1 \
-        label="$(workspace_app_icons $sid)" \
+    # Build sketchybar command array using theme arrays
+    local sketchybar_args=(
+        --add item workspace.$sid left
+        --set workspace.$sid
+        drawing="$drawing"
+        display="$monitor_id"
+        "${workspace_base_style[@]}"
+        "${workspace_inactive_style[@]}"
+        icon="$sid"
+        click_script="aerospace workspace $sid"
+        label="$(workspace_app_icons $sid)"
         script="$CONFIG_DIR/plugins/aerospace.sh $sid"
+    )
+    
+    # Add positioning if specified
+    if [[ -n "$position_before" ]]; then
+        sketchybar_args+=(--move workspace.$sid before "$position_before")
+    fi
+    
+    # Return arguments as newline-separated string
+    printf '%s\n' "${sketchybar_args[@]}"
+}
 
+# create a workspace item.
+# Expects the workspace id as the first argument
+# Optional second argument: item to position before (if not provided, no positioning)
+create_workspace() {
+    local sid=$1
+    local position_before=$2
+    
+    # if $1 was empty, log an error in /tmp/sketchybar.log
+    if [ -z "$sid" ]; then
+        echo "Error: create_workspace() expects a workspace id as the first argument" >> /tmp/sketchybar.log
+        return
+    fi
+
+    # Generate and execute args
+    local args=($(generate_workspace_args "$sid" "$position_before"))
+    sketchybar "${args[@]}"
 }
 sort_alphanumeric() {
   # Read input from positional argument
@@ -106,27 +146,85 @@ sort_alphanumeric() {
   # Process input: remove duplicates and sort
   printf "%s\n" "${input[@]}" | sort -u
 }
+# Extract unique workspace IDs from aerospace workspace data
+# Parameters:
+#   $1 - workspace_data: multi-line string in format "workspace_id|app_name"
+# Returns:
+#   Space-separated string of unique workspace IDs in alphabetical order
+extract_unique_workspaces() {
+  local workspace_data="$1"
+  local workspaces_found=""
+
+  while IFS='|' read -r workspace_id app_name; do
+    if [[ -n "$workspace_id" ]]; then
+      # Add workspace to list if not already present
+      if [[ "$workspaces_found" != *" $workspace_id "* ]]; then
+        workspaces_found+=" $workspace_id "
+      fi
+    fi
+  done <<< "$workspace_data"
+
+  # Sort the workspaces alphabetically before returning
+  if [[ -n "$workspaces_found" ]]; then
+    sort_alphanumeric "$workspaces_found"
+  fi
+}
+
+# Ensure focused workspace is included in workspace list (handles empty workspaces)
+# Parameters:
+#   $1 - workspace_list: space-separated string of workspace IDs
+#   $2 - focused_workspace: the currently focused workspace ID
+# Returns:
+#   Updated space-separated string of workspace IDs including focused workspace
+include_focused_workspace() {
+  local workspace_list="$1"
+  local focused_workspace="$2"
+  
+  # Add focused workspace if it has no windows (empty workspace)
+  if [[ "$workspace_list" != *" $focused_workspace "* ]]; then
+    workspace_list+=" $focused_workspace "
+  fi
+  
+  echo "$workspace_list"
+}
+
+# Legacy function for compatibility with existing code
 list_active_workspaces() {
   local window_workspaces=$(aerospace list-windows --monitor all --format %{workspace})
   window_workspaces="$window_workspaces"$'\n'"$(aerospace list-workspaces --focused)"
   sort_alphanumeric "$window_workspaces" 
 }
 
-# Create all of the workspace items
+# Create sketchybar items for all active aerospace workspaces (batched)
 create_aerospace_workspaces() {
+  # Get all data efficiently 
+  local all_workspace_data=$(aerospace list-windows --monitor all --format "%{workspace}|%{app-name}")
   local focused_workspace=$(aerospace list-workspaces --focused)
-  local active_workspaces=$( list_active_workspaces )
-
-  # lazy initialization of workspaces helps sketchybar startup times.
-  # Only create a workspace item once the workspace is focused or has a window in it
-  for sid in $active_workspaces; do
-    # log the execution time of the function in a log file
-    # { echo -n "creating workspace $sid. Timing: "; time create_workspace $sid; } 2>&1 | tee -a /tmp/sketchybar.log
-    create_workspace $sid
-    if [ $sid = $focused_workspace ]; then
-      set_workspace_focused $sid
+  
+  # Process the data to find active workspaces
+  local active_workspaces=$(extract_unique_workspaces "$all_workspace_data")
+  active_workspaces=$(include_focused_workspace "$active_workspaces" "$focused_workspace")
+  
+  # Build all workspace creation arguments
+  local all_args=()
+  for workspace_id in $active_workspaces; do
+    if [[ -n "$workspace_id" ]]; then
+      # Read newline-separated args properly (preserves spaces)
+      while IFS= read -r arg; do
+        all_args+=("$arg")
+      done <<< "$(generate_workspace_args "$workspace_id")"
     fi
   done
+  
+  # Create all workspaces in single sketchybar call
+  if [[ ${#all_args[@]} -gt 0 ]]; then
+    sketchybar "${all_args[@]}"
+  fi
+  
+  # Set focused workspace styling (separate call needed for timing)
+  if [[ -n "$focused_workspace" ]]; then
+    set_workspace_focused "$focused_workspace"
+  fi
 }
 
 
@@ -137,8 +235,77 @@ create_aerospace_workspaces() {
 # - PREV_WORKSPACE: The ID of the workspace that was previously focused
 handle_workspace_change() {
   
-  set_workspace_focused "$FOCUSED_WORKSPACE"
-  set_workspace_unfocused "$PREV_WORKSPACE"
+  # Get all workspace data in single call
+  local all_data=$(aerospace list-windows --monitor all --format "%{workspace}|%{app-name}")
+  
+  local focused_apps=""
+  local prev_apps=""
+  local prev_empty="true"
+  
+  # Parse workspace data for both focused and previous workspaces
+  while IFS='|' read -r ws app; do
+    if [[ "$ws" == "$FOCUSED_WORKSPACE" && -n "$app" ]]; then
+      focused_apps+="$app "
+    elif [[ "$ws" == "$PREV_WORKSPACE" && -n "$app" ]]; then
+      prev_apps+="$app "
+      prev_empty="false"
+    fi
+  done <<< "$all_data"
+  
+  # Build workspace updates
+  local focused_updates=""
+  local prev_updates=""
+  
+  # Build focused workspace updates
+  if [[ -n "$FOCUSED_WORKSPACE" ]]; then
+    if ! sketchybar_item_exists "workspace.$FOCUSED_WORKSPACE"; then
+      create_and_position_workspace "$FOCUSED_WORKSPACE"
+    fi
+    
+    # Generate icon strip for focused workspace using batched approach
+    local focused_icons=""
+    if [[ -n "$focused_apps" ]]; then
+      local focused_app_array=($focused_apps)
+      focused_icons="$($CONFIG_DIR/plugins/icon_map_fn_batched.sh "${focused_app_array[@]}")"
+    else
+      focused_icons=" —"
+    fi
+    
+    # Build focused workspace updates (only state-specific properties)
+    focused_updates="--set workspace.$FOCUSED_WORKSPACE \
+                           drawing=on \
+                           ${workspace_active_style[*]} \
+                           label=\"$focused_icons\""
+  fi
+  
+  # Build previous workspace updates
+  if [[ -n "$PREV_WORKSPACE" ]]; then
+    local prev_icons=""
+    if [[ "$prev_empty" == "true" ]]; then
+      prev_icons=" —"
+      # Build previous workspace updates (empty, only state-specific properties)
+      prev_updates="--set workspace.$PREV_WORKSPACE \
+                          ${workspace_inactive_style[*]} \
+                          drawing=off \
+                          label=\"$prev_icons\""
+    else
+      local prev_app_array=($prev_apps)
+      prev_icons="$($CONFIG_DIR/plugins/icon_map_fn_batched.sh "${prev_app_array[@]}")"
+      # Build previous workspace updates (with apps, only state-specific properties)
+      prev_updates="--set workspace.$PREV_WORKSPACE \
+                          ${workspace_inactive_style[*]} \
+                          label=\"$prev_icons\""
+    fi
+  fi
+  
+  # Execute batched command
+  if [[ -n "$focused_updates" && -n "$prev_updates" ]]; then
+    eval "sketchybar $focused_updates $prev_updates"
+  elif [[ -n "$focused_updates" ]]; then
+    eval "sketchybar $focused_updates"
+  elif [[ -n "$prev_updates" ]]; then
+    eval "sketchybar $prev_updates"
+  fi
 }
 
 # Use this to detect if an item needs to be created
@@ -153,54 +320,69 @@ sketchybar_item_exists() {
   fi
 }
 
-# Generates a sketchybar --reorder command to correctly sort workspace items
+# Gets all existing workspace items from sketchybar efficiently
+get_existing_workspace_items() {
+  sketchybar --query bar | jq -r '.items[]?' | grep '^workspace\.' | sed 's/^workspace\.//' | sort
+}
+
+# Creates a workspace and positions it correctly in the bar
+# Use this when creating workspaces dynamically (not during initial setup)
+create_and_position_workspace() {
+  local workspace_id="$1"
+  local existing_workspaces=$(get_existing_workspace_items)
+  
+  # Find the correct position
+  local position_target="workspace_separator"
+  for ws in $existing_workspaces; do
+    if [[ "$ws" > "$workspace_id" ]]; then
+      position_target="workspace.$ws"
+      break
+    fi
+  done
+  
+  # Create workspace with positioning in single call
+  create_workspace "$workspace_id" "$position_target"
+}
+
+# Moves a workspace item to the correct position relative to other workspace items
 # This should be used whenever a new workspace item is created after initialization
 # to ensure that the workspace items are sorted in the correct order
-order_workspace_items() {
-  # Read input from positional argument
-  local input=($(echo "$1" | tr ' ' '\n'))
-
-  # Process input: remove duplicates and sort
-  local sorted=($(printf "%s\n" "${input[@]}" | sort -u))
-
-  # Expand into sketchybar --reorder format
-  printf "sketchybar --reorder"
-  for item in "${sorted[@]}"; do
-    printf " \"workspace.%s\"" "$item"
+position_workspace_item() {
+  local new_workspace="$1"
+  
+  # First, move the new workspace before workspace_separator to ensure correct section
+  sketchybar --move "workspace.$new_workspace" before workspace_separator
+  
+  # Then find the correct position among other workspace items
+  local all_workspaces=$(aerospace list-windows --monitor all --format "%{workspace}" | sort -u)
+  local previous_workspace=""
+  
+  # Find the workspace that should come immediately before this one
+  for ws in $all_workspaces; do
+    if [[ "$ws" < "$new_workspace" ]] && sketchybar --query "workspace.$ws" &>/dev/null; then
+      previous_workspace="$ws"
+    elif [[ "$ws" > "$new_workspace" ]] && sketchybar --query "workspace.$ws" &>/dev/null; then
+      # Found the first workspace after our new one, so position before it
+      sketchybar --move "workspace.$new_workspace" before "workspace.$ws"
+      return
+    fi
   done
-  printf " workspace_separator front_app \n"
+  
+  # If we found a previous workspace, position after it
+  if [[ -n "$previous_workspace" ]]; then
+    sketchybar --move "workspace.$new_workspace" after "workspace.$previous_workspace"
+  fi
 }
 
 
 # Expects the workspace id as the first argument
 set_workspace_focused() {
   if ! sketchybar_item_exists "workspace.$1"; then
-    create_workspace $1
-    local active_workspaces=$( list_active_workspaces )
-    local reorder_workspace_items_command=$(order_workspace_items "$active_workspaces" )
-    eval "$reorder_workspace_items_command"
+    create_and_position_workspace $1
   fi
-  # show the focused workspace no matter what
-  sketchybar --set workspace."$1" drawing=on \
-                         label.color=$ACCENT_COLOR \
-                         icon.background.color=$ACCENT_COLOR \
-                         background.border_color=$ACCENT_COLOR
-}
-
-# Expects the workspace id as the first argument
-set_workspace_unfocused() {
-  # First, set it to unfocused colors (very fast)
+  # show the focused workspace no matter what (only state-specific properties)
   sketchybar --set workspace."$1" \
-                         background.color="$ITEM_BG_COLOR" \
-                         label.color=0xFF$MUTED \
-                         icon.background.color="0xFF$SUBTLE" \
-                         background.border_color="0xFF$SUBTLE"
-
-  #Afterwards, hide it if it has no windows (slower perf)
-  # -z means "empty" - ie the workspace has no windows
-  if [[ -z "$(aerospace list-windows --workspace $1)" ]]; then
-    sketchybar --set workspace."$1" drawing=off
-  fi
-
+                   drawing=on \
+                   "${workspace_active_style[@]}"
 }
 
