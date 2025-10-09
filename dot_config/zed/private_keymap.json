@@ -59,5 +59,11 @@
       "shift-tab": "editor::AcceptPartialEditPrediction",
       "tab": "editor::AcceptEditPrediction"
     }
+  },
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "shift-c": "project_panel::CollapseAllEntries"
+    }
   }
 ]

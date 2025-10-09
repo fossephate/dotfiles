@@ -42,11 +42,10 @@ set_dawn_theme() {
 appearance=$(defaults read -g AppleInterfaceStyle 2>/dev/null)
 
 # Check the result and return "light" or "dark"
-if [ "$appearance" == "Dark" ]; then
+# if [ "$appearance" == "Dark" ]; then
   set_main_theme
-else # rose-pine dawn theme
-  set_dawn_theme
-fi
+# else # rose-pine dawn theme
+  # set_dawn_theme
+# fi
 
 export BASE SURFACE OVERLAY MUTED SUBTLE TEXT LOVE GOLD ROSE PINE FOAM IRIS HIGHLIGHT_LOW HIGHLIGHT_MED HIGHLIGHT_HIGH
-

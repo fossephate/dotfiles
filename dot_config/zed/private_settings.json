@@ -57,5 +57,12 @@
   },
   "buffer_font_features": {
     "calt": false
+  },
+  "lsp": {
+    "kotlin-language-server": {
+      "initialization_options": {
+        "timeout": 60000
+      }
+    }
   }
 }

@@ -84,3 +84,20 @@ source $ITEM_DIR/theme_change.sh
 
 # ##### Force all scripts to run the first time (never do this in a script) #####
 sketchybar --update
+
+
+# # sketchybar --add graph test top 300
+# sketchybar --add item apple.preferences popup.apple.logo                                   \
+# --set apple.preferences icon=􀺽                                                  \
+#                  label="Preferences"                                            \
+#                  click_script="open -a 'System Preferences';
+#                                sketchybar -m --set apple.logo popup.drawing=off"\
+# --add item apple.activity popup.apple.logo                                      \
+# --set apple.activity icon=􀒓                                                     \
+#                  label="Activity"                                               \
+#                  click_script="open -a 'Activity Monitor';
+#                                sketchybar -m --set apple.logo popup.drawing=off"\
+
+
+# sketchybar -m --set apple.logo popup.drawing=on
+# sketchybar --set apple.logo popup.y_offset=-64
