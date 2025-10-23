@@ -55,3 +55,7 @@ scutil --set ComputerName book
 # https://sindresorhus.com/supercharge
 # https://dropoverapp.com
 # picasso app mac app store
+
+
+# disable the minimize key
+defaults write -g NSUserKeyEquivalents -dict-add 'Minimize' '\0'

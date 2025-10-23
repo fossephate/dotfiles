@@ -24,8 +24,8 @@
       "shift-u": "vim::Redo",
       "space e": "project_panel::ToggleFocus",
       // "space f f": "file_finder::Toggle",
-      "space f": "editor::ToggleFold",
-      "cmd-e": "project_panel::ToggleFocus"
+      "space f": "editor::ToggleFold"
+      // "cmd-e": "project_panel::ToggleFocus"
     }
   },
   {
@@ -63,7 +63,52 @@
   {
     "context": "ProjectPanel",
     "bindings": {
-      "shift-c": "project_panel::CollapseAllEntries"
+      "cmd-shift-c": "project_panel::CollapseAllEntries"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-m n": "pane::SplitLeft",
+      "cmd-m e": "pane::SplitDown",
+      "cmd-m i": "pane::SplitUp",
+      "cmd-m o": "pane::SplitRight",
+      "cmd-m cmd-n": "workspace::ActivatePaneLeft",
+      "cmd-m cmd-e": "workspace::ActivatePaneDown",
+      "cmd-m cmd-i": "workspace::ActivatePaneUp",
+      "cmd-m cmd-o": "workspace::ActivatePaneRight",
+      "cmd-m shift-n": "workspace::SwapPaneLeft",
+      "cmd-m shift-e": "workspace::SwapPaneDown",
+      "cmd-m shift-i": "workspace::SwapPaneUp"
+      // "cmd-m shift-o": "workspace::SwapPaneRight"
+      // "cmd-m [": "vim::ResizePaneLeft",
+      // "cmd-m ]": "vim::ResizePaneRight"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-e": "vim::ScrollDown",
+      "cmd-i": "vim::ScrollUp",
+      "cmd-alt-up": "pane::SwapItemLeft",
+      "cmd-alt-down": "pane::SwapItemRight"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "cmd-e": "terminal::ScrollPageDown",
+      "cmd-i": "terminal::ScrollPageUp"
+    }
+  },
+  {
+    "bindings": {
+      "cmd-k 0": "panel::NextPanelTab"
+    }
+  },
+  {
+    "bindings": {
+      "cmd-m": null // disable garbage minimize default macos behavior
     }
   }
 ]
