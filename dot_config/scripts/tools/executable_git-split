@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -e
+
+# Get current branch
+current_branch=$(git branch --show-current)
+gum style --foreground 212 "Current branch: $current_branch"
+
+# Ask for base branch
+base_branch=$(gum input --placeholder "Base branch (e.g., main)" --header "Enter base branch to compare against")
+
+# Validate base branch exists
+if ! git rev-parse --verify "$base_branch" &>/dev/null; then
+    gum style --foreground 196 "Branch '$base_branch' does not exist"
+    exit 1
+fi
+
+# Ask for target branch name
+target_branch=$(gum input --placeholder "feature/split-changes" --header "Enter NEW target branch name")
+
+# Check target branch doesn't exist
+if git rev-parse --verify "$target_branch" &>/dev/null; then
+    gum style --foreground 196 "Branch '$target_branch' already exists"
+    exit 1
+fi
+
+# Get changed files
+mapfile -t changed_files < <(git diff --name-only "$base_branch")
+
+if [ ${#changed_files[@]} -eq 0 ]; then
+    gum style --foreground 214 "No changed files between $current_branch and $base_branch"
+    exit 0
+fi
+
+# Ask which files to move (multi-select)
+mapfile -t selected_files < <(printf '%s\n' "${changed_files[@]}" | gum choose --no-limit --header "Select files to MOVE to $target_branch (space to select, enter to confirm)")
+
+if [ ${#selected_files[@]} -eq 0 ]; then
+    gum style --foreground 214 "No files selected, exiting"
+    exit 0
+fi
+
+# Show summary and confirm
+echo ""
+gum style --border normal --padding "1 2" --border-foreground 212 \
+    "Moving ${#selected_files[@]} file(s) from '$current_branch' to '$target_branch'"
+printf '%s\n' "${selected_files[@]}" | gum style --foreground 39
+
+if ! gum confirm "Proceed with move?"; then
+    echo "Aborted"
+    exit 0
+fi
+
+# Create a patch of the selected files (from base -> current)
+patch_file=$(mktemp)
+git diff "$base_branch" -- "${selected_files[@]}" > "$patch_file"
+
+# Revert selected files on current branch (restore to base branch state)
+gum spin --spinner dot --title "Reverting files on $current_branch..." -- \
+    git checkout "$base_branch" -- "${selected_files[@]}"
+
+git commit -m "refactor: move changes to $target_branch
+
+Moved files:
+$(printf '- %s\n' "${selected_files[@]}")"
+
+# Create target branch from base and apply the patch
+git checkout -b "$target_branch" "$base_branch"
+
+gum spin --spinner dot --title "Applying changes to $target_branch..." -- \
+    git apply "$patch_file"
+
+git add "${selected_files[@]}"
+git commit -m "feat: changes moved from $current_branch
+
+Moved files:
+$(printf '- %s\n' "${selected_files[@]}")"
+
+# Clean up
+rm "$patch_file"
+
+# Go back to original branch
+git checkout "$current_branch"
+
+echo ""
+gum style --foreground 82 "✓ Done!"
+echo ""
+echo "  • $current_branch: reverted ${#selected_files[@]} file(s)"
+echo "  • $target_branch: created with those changes"
+echo ""
+gum style --foreground 245 "You're back on $current_branch"
