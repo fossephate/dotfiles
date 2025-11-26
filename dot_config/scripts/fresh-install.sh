@@ -16,6 +16,7 @@ brew install deno
 brew install imagemagick
 brew install swiftformat
 brew install starship
+brew install gum
 
 brew install --cask orion
 brew install --cask xcodes
