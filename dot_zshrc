@@ -43,6 +43,9 @@ export PS1='%n@%m %2~ %# '
 # }
 # eval "$(zoxide init --cmd cd zsh)"
 
+# git-split and other tools:
+export PATH="$HOME/.config/scripts/tools:$PATH"
+
 # hack for claude code:
 # [ -z "$DISABLE_ZOXIDE" ] && eval "$(zoxide init --cmd cd zsh)"
 
