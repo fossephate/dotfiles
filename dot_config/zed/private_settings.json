@@ -7,15 +7,29 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "context_servers": {
-    "mcp-server-figma": {
-      "source": "extension",
-      "enabled": true,
-      "settings": {
-      }
-    }
+  "diff_view_style": "unified",
+  "project_panel": {
+    "dock": "left"
   },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "dock": "left"
+  },
+  "context_servers": {},
   "edit_predictions": {
+    "codestral": {
+      "model": "codestral-latest"
+    },
+    "open_ai_compatible_api": {
+      "api_url": "https://api.anthropic.com/v1/messages",
+      "model": "claude-sonnet-4-6"
+    },
+    "provider": "open_ai_compatible_api",
     "disabled_globs": [],
     "mode": "eager",
     "copilot": {
@@ -25,11 +39,9 @@
     },
     "enabled_in_text_threads": false
   },
-  "features": {
-    "edit_prediction_provider": "zed"
-  },
   "icon_theme": "Material Icon Theme",
   "agent": {
+    "dock": "right",
     "inline_assistant_model": {
       "provider": "anthropic",
       "model": "claude-sonnet-4-thinking-latest"
