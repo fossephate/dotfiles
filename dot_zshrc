@@ -53,4 +53,4 @@ if [[ "$CLAUDECODE" != "1" ]]; then
     eval "$(zoxide init --cmd cd zsh)"
 fi
 
-eval "$(starship init zsh)"
+eval "$(starship init zsh)"export PATH="$HOME/.local/bin:$PATH"

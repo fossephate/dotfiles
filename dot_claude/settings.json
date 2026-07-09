@@ -1,3 +1,22 @@
 {
-  "alwaysThinkingEnabled": true
+  "model": "claude-fable-5[1m]",
+  "enabledPlugins": {
+    "upgrading-expo@expo-plugins": true,
+    "swift-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "caveman@caveman": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": false,
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "verbose": false,
+  "skipAutoPermissionPrompt": true
 }

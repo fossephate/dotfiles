@@ -16,7 +16,7 @@ ITEM_DIR="$CONFIG_DIR/items"
 bar_config=(
   --bar
   height=28
-  y_offset=28
+  y_offset=33
   blur_radius=30
   position=top
   sticky=off

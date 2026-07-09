@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 set -e
 
 # Get current branch
@@ -24,17 +24,23 @@ if git rev-parse --verify "$target_branch" &>/dev/null; then
 fi
 
 # Get changed files
-mapfile -t changed_files < <(git diff --name-only "$base_branch")
+changed_files=()
+while IFS= read -r file; do
+    [[ -n "$file" ]] && changed_files+=("$file")
+done < <(git diff --name-only "$base_branch")
 
-if [ ${#changed_files[@]} -eq 0 ]; then
+if [[ ${#changed_files[@]} -eq 0 ]]; then
     gum style --foreground 214 "No changed files between $current_branch and $base_branch"
     exit 0
 fi
 
 # Ask which files to move (multi-select)
-mapfile -t selected_files < <(printf '%s\n' "${changed_files[@]}" | gum choose --no-limit --header "Select files to MOVE to $target_branch (space to select, enter to confirm)")
+selected_files=()
+while IFS= read -r file; do
+    [[ -n "$file" ]] && selected_files+=("$file")
+done < <(printf '%s\n' "${changed_files[@]}" | gum choose --no-limit --header "Select files to MOVE to $target_branch (space to select, enter to confirm)")
 
-if [ ${#selected_files[@]} -eq 0 ]; then
+if [[ ${#selected_files[@]} -eq 0 ]]; then
     gum style --foreground 214 "No files selected, exiting"
     exit 0
 fi
