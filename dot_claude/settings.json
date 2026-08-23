@@ -1,10 +1,17 @@
 {
-  "model": "claude-fable-5[1m]",
+  "env": {
+    "_CLAUDE_CODE_DISABLE_MOUSE": "1"
+  },
+  "model": "fable",
+  "hooks": {},
   "enabledPlugins": {
     "upgrading-expo@expo-plugins": true,
     "swift-lsp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
-    "caveman@caveman": true
+    "caveman@caveman": true,
+    "mongodb@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "browser-use@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -12,11 +19,18 @@
         "source": "github",
         "repo": "JuliusBrussee/caveman"
       }
+    },
+    "cloudflare": {
+      "source": {
+        "source": "github",
+        "repo": "cloudflare/skills"
+      }
     }
   },
   "alwaysThinkingEnabled": false,
   "effortLevel": "high",
   "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
   "verbose": false,
-  "skipAutoPermissionPrompt": true
+  "agentPushNotifEnabled": true
 }

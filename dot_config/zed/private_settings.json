@@ -7,7 +7,20 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "diff_view_style": "unified",
+  "agent_servers": {
+    "codex-acp": {
+      "type": "registry"
+    },
+    "claude-acp": {
+      "default_config_options": {
+        "fast": false,
+        "model": "fable",
+        "mode": "auto"
+      },
+      "type": "registry"
+    }
+  },
+  "diff_view_style": "split",
   "project_panel": {
     "dock": "left"
   },
@@ -22,14 +35,15 @@
   },
   "context_servers": {},
   "edit_predictions": {
+    "allow_data_collection": "no",
     "codestral": {
       "model": "codestral-latest"
     },
     "open_ai_compatible_api": {
-      "api_url": "https://api.anthropic.com/v1/messages",
-      "model": "claude-sonnet-4-6"
+      "model": "",
+      "api_url": "https://api.anthropic.com/v1/messages"
     },
-    "provider": "open_ai_compatible_api",
+    "provider": "zed",
     "disabled_globs": [],
     "mode": "eager",
     "copilot": {
@@ -41,6 +55,13 @@
   },
   "icon_theme": "Material Icon Theme",
   "agent": {
+    "sidebar_side": "right",
+    "default_model": {
+      "provider": "anthropic",
+      "model": "claude-fable-5",
+      "enable_thinking": true,
+      "effort": "high"
+    },
     "dock": "right",
     "inline_assistant_model": {
       "provider": "anthropic",
@@ -55,13 +76,16 @@
     "font_family": "FiraCode Nerd Font Mono",
     "line_height": {
       "custom": 1.2
-    }
+    },
+    "tab_orientation": "vertical",
+    "vertical_tab_width": 200,
+    "vertical_tab_position": "right"
   },
   "telemetry": {
     "diagnostics": false,
     "metrics": false
   },
-  "base_keymap": "VSCode",
+  "base_keymap": "Zed",
   "vim_mode": true,
   "ui_font_size": 16,
   "buffer_font_size": 15,

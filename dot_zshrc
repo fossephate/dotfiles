@@ -54,3 +54,4 @@ if [[ "$CLAUDECODE" != "1" ]]; then
 fi
 
 eval "$(starship init zsh)"export PATH="$HOME/.local/bin:$PATH"
+source ~/.mcp-env

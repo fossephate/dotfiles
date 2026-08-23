@@ -49,7 +49,16 @@ brew install --cask nikitabobko/tap/aerospace
 brew install --cask mouseless
 
 
-# scutil --get HostName 
+brew tap mobile-dev-inc/tap
+brew trust --formula mobile-dev-inc/tap/maestro
+brew install mobile-dev-inc/tap/maestro
+
+brew tap truongduy2611/tap
+brew install --cask app-screenshots
+brew install appshots
+
+
+# scutil --get HostName
 scutil --set LocalHostName book
 scutil --set ComputerName book
 
