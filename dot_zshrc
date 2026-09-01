@@ -55,3 +55,11 @@ fi
 
 eval "$(starship init zsh)"export PATH="$HOME/.local/bin:$PATH"
 source ~/.mcp-env
+
+# hfind – fuzzy history search (~/dev/hfind)
+command -v hfind >/dev/null && eval "$(hfind init zsh)"
+
+# write history immediately (not just on shell exit) and keep more of it
+setopt INC_APPEND_HISTORY
+HISTSIZE=50000
+SAVEHIST=50000

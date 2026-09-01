@@ -86,6 +86,34 @@
     },
   },
   {
+    // "context": "AgentPanel || ThreadsSidebar",
+    "context": "Terminal",
+    "bindings": {
+      // "cmd-alt-up": "panel::NextPanelTab",
+      // "cmd-alt-down": "panel::PreviousPanelTab",
+      // "cmd-alt-left": "multi_workspace::PreviousThread",
+      // "cmd-alt-right": "multi_workspace::NextThread",
+    },
+  },
+  {
+    "context": "AgentPanel || ThreadsSidebar",
+    "bindings": {
+      "cmd-alt-left": "multi_workspace::PreviousThread",
+      "cmd-alt-right": "multi_workspace::NextThread",
+      // "cmd-alt-up": "",
+      // "cmd-alt-down": "panel::PreviousPanelTab",
+    },
+  },
+  // {
+  //   // "context": "AgentPanel || ThreadsSidebar",
+  //   // "context": "!Editor && Terminal",
+  //   "context": "Terminal && !Terminal",
+  //   "bindings": {
+  //     "cmd-alt-left": "multi_workspace::PreviousThread",
+  //     "cmd-alt-right": "multi_workspace::NextThread",
+  //   },
+  // },
+  {
     "context": "Editor",
     "bindings": {
       "cmd-e": "vim::ScrollDown",
