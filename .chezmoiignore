@@ -1,0 +1,26 @@
+# Claude Code runtime state - caches, logs, transcripts, not config
+.claude/backups
+.claude/cache
+.claude/chrome
+.claude/daemon
+.claude/daemon.log
+.claude/daemon-auth-*
+.claude/debug
+.claude/file-history
+.claude/history.jsonl
+.claude/ide
+.claude/jobs
+.claude/paste-cache
+.claude/plans
+.claude/projects
+.claude/shell-snapshots
+.claude/statsig
+.claude/todos
+.claude/*.json
+.claude/.*
+!.claude/settings.json
+
+# Skill build artifacts
+.claude/skills/**/.venv
+.claude/skills/**/__pycache__
+.claude/skills/**/node_modules
