@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+server="${NTFY_SERVER:-https://ntfy.fosse.co}"
+topic="${NTFY_TOPIC:-all}"
+title=""
+priority=""
+tags=""
+click=""
+words=()
+
+usage() {
+    cat <<'USAGE'
+usage: ntfy [-t TOPIC] [-T TITLE] [-p PRIORITY] [-g TAGS] [-c URL] message...
+
+  -t TOPIC     topic to publish to (default: all, or $NTFY_TOPIC)
+  -T TITLE     notification title
+  -p PRIORITY  min|low|default|high|max (or 1-5)
+  -g TAGS      comma-separated tags/emoji, e.g. warning,skull
+  -c URL       url to open when the notification is clicked
+  -s SERVER    ntfy server (default: https://ntfy.fosse.co, or $NTFY_SERVER)
+
+Message can be quoted or not. With no message, reads stdin.
+
+  ntfy -t fosse "build done"   # override topic
+  ntfy build done
+  make 2>&1 | ntfy -T "make output"
+USAGE
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -t|--topic)    topic="$2"; shift 2 ;;
+        -T|--title)    title="$2"; shift 2 ;;
+        -p|--priority) priority="$2"; shift 2 ;;
+        -g|--tags)     tags="$2"; shift 2 ;;
+        -c|--click)    click="$2"; shift 2 ;;
+        -s|--server)   server="$2"; shift 2 ;;
+        -h|--help)     usage; exit 0 ;;
+        --)            shift; words+=("$@"); break ;;
+        -*)            echo "ntfy: unknown option $1" >&2; usage >&2; exit 1 ;;
+        *)             words+=("$1"); shift ;;
+    esac
+done
+
+if [[ ${#words[@]} -gt 0 ]]; then
+    body="${words[*]}"
+elif [[ ! -t 0 ]]; then
+    body="$(cat)"
+else
+    echo "ntfy: no message given" >&2
+    usage >&2
+    exit 1
+fi
+
+headers=()
+[[ -n "$title" ]]    && headers+=(-H "Title: $title")
+[[ -n "$priority" ]] && headers+=(-H "Priority: $priority")
+[[ -n "$tags" ]]     && headers+=(-H "Tags: $tags")
+[[ -n "$click" ]]    && headers+=(-H "Click: $click")
+[[ -n "${NTFY_TOKEN:-}" ]] && headers+=(-H "Authorization: Bearer $NTFY_TOKEN")
+
+curl -fsS --data-binary "$body" "${headers[@]+"${headers[@]}"}" "${server%/}/$topic" -o /dev/null
