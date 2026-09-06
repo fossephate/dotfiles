@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+port="${FTPSHARE_PORT:-2121}"
+writable=""
+dir=""
+
+usage() {
+    cat <<'USAGE'
+usage: ftpshare [-p PORT] [-w] [DIR]
+
+Serve DIR (default: current directory) over anonymous FTP on the LAN
+for as long as the command runs. Ctrl-C stops it. Read-only by default.
+
+  -p PORT   port to listen on (default: 2121, or $FTPSHARE_PORT)
+  -w        allow writes (upload/delete)
+
+Open in VLC on a TV: Browsing > add network favorite > ftp://<ip>:<port>
+
+  ftpshare ~/Movies
+  ftpshare -p 2222 -w ~/Downloads
+USAGE
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -p|--port)  port="$2"; shift 2 ;;
+        -w|--write) writable="-w"; shift ;;
+        -h|--help)  usage; exit 0 ;;
+        --)         shift; dir="${1:-}"; break ;;
+        -*)         echo "ftpshare: unknown option $1" >&2; usage >&2; exit 1 ;;
+        *)          dir="$1"; shift ;;
+    esac
+done
+
+dir="$(cd "${dir:-.}" && pwd)"
+
+if ! command -v uvx >/dev/null; then
+    echo "ftpshare: uvx not found (brew install uv)" >&2
+    exit 1
+fi
+
+ip=""
+for iface in en0 en1 en2; do
+    ip="$(ipconfig getifaddr "$iface" 2>/dev/null || true)"
+    [[ -n "$ip" ]] && break
+done
+
+echo "sharing $dir"
+echo "ftp://${ip:-<your-ip>}:$port  (anonymous, ${writable:+read-write}${writable:-read-only}, Ctrl-C to stop)"
+echo
+
+exec uvx --from pyftpdlib python -m pyftpdlib -p "$port" -d "$dir" $writable
