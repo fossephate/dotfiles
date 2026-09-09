@@ -193,10 +193,10 @@ exec-on-workspace-change = ['/bin/bash', '-c',
     alt-period = 'layout floating tiling'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-    alt-n = 'focus left'
-    alt-e = 'focus down'
-    alt-i = 'focus up'
-    alt-o = 'focus right'
+    alt-n = 'focus --ignore-floating left'
+    alt-e = 'focus --ignore-floating down'
+    alt-i = 'focus --ignore-floating up'
+    alt-o = 'focus --ignore-floating right'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
     alt-shift-n = 'move left'
