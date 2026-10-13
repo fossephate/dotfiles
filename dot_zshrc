@@ -7,7 +7,7 @@ export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 # ruby / rbenv
 export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-eval "$(rbenv init - zsh)"
+command -v rbenv >/dev/null && eval "$(rbenv init - zsh)"
 
 # bun
 [ -s "/Users/fosse/.bun/_bun" ] && source "/Users/fosse/.bun/_bun"
@@ -49,12 +49,13 @@ export PATH="$HOME/.config/scripts/tools:$PATH"
 # hack for claude code:
 # [ -z "$DISABLE_ZOXIDE" ] && eval "$(zoxide init --cmd cd zsh)"
 
-if [[ "$CLAUDECODE" != "1" ]]; then
+if [[ "$CLAUDECODE" != "1" ]] && command -v zoxide >/dev/null; then
     eval "$(zoxide init --cmd cd zsh)"
 fi
 
-eval "$(starship init zsh)"export PATH="$HOME/.local/bin:$PATH"
-source ~/.mcp-env
+eval "$(starship init zsh)"
+export PATH="$HOME/.local/bin:$PATH"
+[ -f ~/.mcp-env ] && source ~/.mcp-env
 
 # hfind – fuzzy history search (~/dev/hfind)
 command -v hfind >/dev/null && eval "$(hfind init zsh)"

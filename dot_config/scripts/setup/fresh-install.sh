@@ -18,7 +18,10 @@ brew install deno
 brew install imagemagick
 brew install swiftformat
 brew install starship
+brew install zoxide
+brew install rbenv
 brew install gum
+brew install gh
 
 # rust - .zprofile sources ~/.cargo/env
 brew install rustup
@@ -34,6 +37,7 @@ brew install --cask 1password
 brew install --cask warp
 brew install --cask karabiner-elements
 brew install --cask cursor
+brew install --cask zed
 brew install --cask raycast
 brew install --cask menuwhere
 brew install --cask homerow
