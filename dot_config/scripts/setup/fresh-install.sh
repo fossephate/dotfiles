@@ -1,10 +1,12 @@
 brew tap FelixKratz/formulae
+brew trust FelixKratz/formulae
 brew install borders
 
 # brew install sketchybar
 
 brew uninstall sketchybar
 brew tap fossephate/formulae
+brew trust fossephate/formulae
 brew install --HEAD sketchybar-display
 
 brew tap leoafarias/fvm
@@ -17,6 +19,10 @@ brew install imagemagick
 brew install swiftformat
 brew install starship
 brew install gum
+
+# rust - .zprofile sources ~/.cargo/env
+brew install rustup
+rustup-init -y --no-modify-path
 
 brew install --cask orion
 brew install --cask xcodes
@@ -43,6 +49,7 @@ brew install --cask gitkraken
 # starship font
 brew install --cask font-fira-code-nerd-font
 brew install --cask font-sf-mono-nerd-font-ligaturized
+mkdir -p ~/.config
 starship preset gruvbox-rainbow -o ~/.config/starship.toml
 
 brew install --cask nikitabobko/tap/aerospace
@@ -54,6 +61,7 @@ brew trust --formula mobile-dev-inc/tap/maestro
 brew install mobile-dev-inc/tap/maestro
 
 brew tap truongduy2611/tap
+brew trust truongduy2611/tap
 brew install --cask app-screenshots
 brew install appshots
 
