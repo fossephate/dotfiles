@@ -9,6 +9,11 @@ brew tap fossephate/formulae
 brew trust fossephate/formulae
 brew install --HEAD sketchybar-display
 
+# sketchybar icon fonts: SF Symbols glyphs + app icons
+brew install --cask font-sf-pro
+brew install --cask sf-symbols
+brew install --cask font-sketchybar-app-font
+
 brew tap leoafarias/fvm
 brew install fvm
 
