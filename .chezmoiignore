@@ -24,3 +24,6 @@
 .claude/skills/**/.venv
 .claude/skills/**/__pycache__
 .claude/skills/**/node_modules
+
+# Zed LMDB lock file - runtime state
+.config/zed/prompts/prompts-library-db.0.mdb/lock.mdb

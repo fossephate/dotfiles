@@ -129,11 +129,11 @@
       "cmd-i": "terminal::ScrollPageUp",
     },
   },
-  {
-    "bindings": {
-      "cmd-k 0": "panel::NextPanelTab",
-    },
-  },
+  // {
+  //   "bindings": {
+  //     "cmd-k 0": "panel::NextPanelTab",
+  //   },
+  // },
   {
     "bindings": {
       "cmd-m": null, // disable garbage minimize default macos behavior

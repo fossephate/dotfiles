@@ -55,7 +55,7 @@
   },
   "icon_theme": "Material Icon Theme",
   "agent": {
-    "sidebar_side": "right",
+    "sidebar_side": "left",
     "default_model": {
       "provider": "anthropic",
       "model": "claude-fable-5",
