@@ -19,6 +19,16 @@ and tags; commit hashes change, so remotes need a force-push afterwards.
 Usage:
     shift-commit-times.py [repo] --since 2026-01-01 --until 2026-06-30 --dry-run
     shift-commit-times.py [repo] --since 2026-01-01 --until 2026-06-30 --force
+    shift-commit-times.py [repo] --since ... --author "Jane Doe" --author janed --dry-run
+
+--author restricts the rewrite to commits whose author name matches exactly
+(repeatable). Use it on forks that merge an upstream so other people's
+commits, and the upstream merge base, are left alone.
+
+--set-identity 'Name <email>' additionally rewrites author AND committer
+identity to the given one on every selected commit whose author date falls
+inside --since/--until, regardless of time of day. Useful for folding CI or
+alternate-spelling identities into one.
 """
 
 import argparse
@@ -70,24 +80,51 @@ def shift_date_bytes(raw, since, until):
     return f"{new_epoch} {tz}".encode()
 
 
+def in_window(epoch, since, until):
+    local_date = dt.datetime.fromtimestamp(epoch, tz=PACIFIC).date()
+    if since and local_date < since:
+        return False
+    if until and local_date > until:
+        return False
+    return True
+
+
+def parse_identity(s):
+    name, _, rest = s.partition("<")
+    email = rest.rstrip(">").strip()
+    if not name.strip() or not email:
+        raise argparse.ArgumentTypeError("identity must look like 'Name <email>'")
+    return name.strip(), email
+
+
 def fmt(epoch):
     return dt.datetime.fromtimestamp(epoch, tz=PACIFIC).strftime("%a %Y-%m-%d %H:%M:%S %Z")
 
 
-def list_shifts(since, until):
-    """Return [(sha, subject, field, old_epoch, new_epoch)] for every date that would change."""
+def list_shifts(since, until, authors=None, identity=None):
+    """Return ([(sha, subject, field, old_epoch, new_epoch)], [(sha, subject, field, old_ident)]).
+
+    The first list is every date that would change; the second is every
+    author/committer identity that --set-identity would replace.
+    """
     out = subprocess.run(
-        ["git", "log", "--all", "--format=%H%x09%at%x09%ct%x09%s"],
+        ["git", "log", "--all", "--format=%H%x09%at%x09%ct%x09%an%x09%ae%x09%cn%x09%ce%x09%s"],
         check=True, capture_output=True, text=True,
     ).stdout
-    shifts = []
+    shifts, renames = [], []
     for line in out.splitlines():
-        sha, a_epoch, c_epoch, subject = line.split("\t", 3)
+        sha, a_epoch, c_epoch, an, ae, cn, ce, subject = line.split("\t", 7)
+        if authors and an not in authors:
+            continue
         for field, epoch in (("author", int(a_epoch)), ("committer", int(c_epoch))):
             new = shift_epoch(epoch, since, until)
             if new:
                 shifts.append((sha, subject, field, epoch, new[0]))
-    return shifts
+        if identity and in_window(int(a_epoch), since, until):
+            for field, name, email in (("author", an, ae), ("committer", cn, ce)):
+                if (name, email) != identity:
+                    renames.append((sha, subject, field, f"{name} <{email}>"))
+    return shifts, renames
 
 
 def future_violations(shifts):
@@ -117,14 +154,21 @@ def report_future_violations(bad):
     )
 
 
-def dry_run(since, until):
-    shifts = list_shifts(since, until)
+def dry_run(since, until, authors=None, identity=None):
+    shifts, renames = list_shifts(since, until, authors, identity)
     seen = set()
     for sha, subject, field, old, new in shifts:
         if sha not in seen:
             seen.add(sha)
             print(f"{sha[:10]}  {subject}")
         print(f"    {field + ':':<10} {fmt(old)}  ->  {fmt(new)}")
+    if renames:
+        print("\nIdentity changes:")
+        for sha, subject, field, old in renames:
+            if sha not in seen:
+                seen.add(sha)
+                print(f"{sha[:10]}  {subject}")
+            print(f"    {field + ':':<10} {old}  ->  {identity[0]} <{identity[1]}>")
     print(f"\n{len(seen)} commit(s) would be rewritten. Re-run without --dry-run to apply.")
     bad = future_violations(shifts)
     if bad:
@@ -133,8 +177,8 @@ def dry_run(since, until):
         sys.exit(1)
 
 
-def apply_rewrite(since, until, force):
-    bad = future_violations(list_shifts(since, until))
+def apply_rewrite(since, until, force, authors=None, identity=None):
+    bad = future_violations(list_shifts(since, until, authors, identity)[0])
     if bad:
         report_future_violations(bad)
         sys.exit(1)
@@ -146,13 +190,24 @@ def apply_rewrite(since, until, force):
 
     stats = {"changed": 0}
 
+    author_set = {a.encode() for a in authors} if authors else None
+
     def commit_callback(commit, _metadata):
+        if author_set and commit.author_name not in author_set:
+            return
         touched = False
         for attr in ("author_date", "committer_date"):
             new = shift_date_bytes(getattr(commit, attr), since, until)
             if new is not None:
                 setattr(commit, attr, new)
                 touched = True
+        if identity and in_window(int(commit.author_date.split(b" ")[0]), since, until):
+            name, email = identity[0].encode(), identity[1].encode()
+            for role in ("author", "committer"):
+                if (getattr(commit, role + "_name"), getattr(commit, role + "_email")) != (name, email):
+                    setattr(commit, role + "_name", name)
+                    setattr(commit, role + "_email", email)
+                    touched = True
         if touched:
             stats["changed"] += 1
 
@@ -176,6 +231,11 @@ def main():
                         help="only shift commits on/after this Pacific date")
     parser.add_argument("--until", type=parse_date, metavar="YYYY-MM-DD",
                         help="only shift commits on/before this Pacific date")
+    parser.add_argument("--author", action="append", metavar="NAME",
+                        help="only shift commits whose author name matches exactly (repeatable)")
+    parser.add_argument("--set-identity", type=parse_identity, metavar="'NAME <EMAIL>'",
+                        help="also rewrite author and committer identity to this on every commit "
+                             "selected by --author within --since/--until (any time of day)")
     parser.add_argument("--dry-run", action="store_true",
                         help="preview which commits would change without rewriting")
     parser.add_argument("--force", action="store_true",
@@ -184,9 +244,9 @@ def main():
 
     os.chdir(args.repo)
     if args.dry_run:
-        dry_run(args.since, args.until)
+        dry_run(args.since, args.until, args.author, args.set_identity)
     else:
-        apply_rewrite(args.since, args.until, args.force)
+        apply_rewrite(args.since, args.until, args.force, args.author, args.set_identity)
 
 
 if __name__ == "__main__":

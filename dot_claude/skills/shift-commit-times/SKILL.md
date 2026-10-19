@@ -27,10 +27,17 @@ base directory. It depends on the `git-filter-repo` Python package.
 
 ## Arguments
 
-`/shift-commit-times [repo] [--since YYYY-MM-DD] [--until YYYY-MM-DD]`
+`/shift-commit-times [repo] [--since YYYY-MM-DD] [--until YYYY-MM-DD] [--author NAME ...] [--set-identity 'NAME <EMAIL>']`
 
 - `repo`: path to the git repository. If omitted, use the current working
   directory (verify it is actually a git repo first).
+- `--author NAME` (repeatable): only shift commits whose author name matches
+  exactly. Use it on forks that merge an upstream (see below) so only the
+  user's own identities are rewritten; check `git log --format=%an | sort -u`
+  for the spellings in use.
+- `--set-identity 'Name <email>'`: also rewrite author and committer identity
+  to this on every selected commit inside the date window (any time of day).
+  Combine with `--author` to fold CI or alternate-spelling identities into one.
 - `--since` / `--until`: inclusive Pacific-date bounds on which commits get
   shifted. If the user gave a timeframe in prose ("last month", "June"),
   convert it to explicit dates and confirm them in the preview step. If no
