@@ -9,7 +9,7 @@ export PATH="$PATH:/Users/fosse/.docker/bin"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # cargo
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 # deno
 # . "/Users/fosse/.deno/env"
