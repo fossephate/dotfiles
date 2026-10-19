@@ -37,7 +37,6 @@ brew install --cask xcodes
 brew install --cask slack
 brew install --cask discord
 brew install --cask spotify
-brew install --cask arc
 brew install --cask 1password
 brew install --cask warp
 brew install --cask karabiner-elements
@@ -48,18 +47,13 @@ brew install --cask menuwhere
 brew install --cask homerow
 brew install --cask wezterm
 brew install --cask ghostty
-brew install --cask shottr
 brew install --cask aldente
-brew install --cask copyclip
-brew install --cask crossover
 brew install --cask cleanshot
-brew install --cask gitkraken
+brew install --cask macpacker
 
 # starship font
 brew install --cask font-fira-code-nerd-font
 brew install --cask font-sf-mono-nerd-font-ligaturized
-mkdir -p ~/.config
-starship preset gruvbox-rainbow -o ~/.config/starship.toml
 
 brew install --cask nikitabobko/tap/aerospace
 brew install --cask mouseless
